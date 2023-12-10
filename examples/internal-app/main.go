@@ -9,9 +9,9 @@ import (
 )
 
 func main() {
-	credential := dingtalk.InternalAppCredential{
-		AppKey:    "",
-		AppSecret: "",
+	credential := &dingtalk.InternalAppCredential{
+		AppKey:    "YourAppKey",
+		AppSecret: "YourAppSecret",
 	}
 
 	client, err := dingtalk.NewClient(credential, nil)
