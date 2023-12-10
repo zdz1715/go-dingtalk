@@ -64,7 +64,7 @@ func (s *OAuthService) GetAccessToken(ctx context.Context) (*AccessToken, error)
 	}
 	var respBody AccessToken
 	err := s.client.Invoke(
-		context.Background(),
+		ctx,
 		s.credential.Method(),
 		s.credential.URL(),
 		s.credential.Body(),
