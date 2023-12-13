@@ -51,3 +51,27 @@ func TestContactsService_ListDepartmentsV1(t *testing.T) {
 		t.Logf("%v", reply)
 	}
 }
+
+func TestContactsService_ListUsers(t *testing.T) {
+	client, err := NewClient(testInternalAppCredential, &Options{
+		ClientOpts: []ghttp.ClientOption{
+			ghttp.WithDebug(true),
+		},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reply, err := client.Contacts.ListUsers(context.Background(), &ListUsersOptions{
+		DeptId: goutils.Ptr(55436473),
+		Cursor: goutils.Ptr(0),
+		Size:   goutils.Ptr(2),
+	})
+
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Logf("%v", reply)
+	}
+}

@@ -31,6 +31,57 @@ func (s *ContactsService) ListDepartments(ctx context.Context, opts *ListDepartm
 	return respBody, nil
 }
 
+type ListUsersOptions struct {
+	DeptId             *int      `json:"dept_id,omitempty" query:"dept_id"`
+	Cursor             *int      `json:"cursor,omitempty" query:"cursor"`
+	Size               *int      `json:"size,omitempty" query:"size"`
+	OrderField         *string   `json:"order_field,omitempty" query:"order_field"`
+	ContainAccessLimit *bool     `json:"contain_access_limit,omitempty" query:"contain_access_limit"`
+	Language           *Language `json:"language,omitempty" query:"language"`
+}
+
+type User struct {
+	Userid           string   `json:"userid"`
+	Unionid          string   `json:"unionid"`
+	Name             string   `json:"name"`
+	Avatar           string   `json:"avatar"`
+	StateCode        string   `json:"state_code"`
+	Mobile           string   `json:"mobile"`
+	HideMobile       string   `json:"hide_mobile"`
+	Telephone        string   `json:"telephone"`
+	JobNumber        string   `json:"job_number"`
+	Title            string   `json:"title"`
+	Email            string   `json:"email"`
+	OrgEmail         string   `json:"org_email"`
+	Remark           string   `json:"remark"`
+	DeptIDList       []string `json:"dept_id_list"`
+	DeptOrder        int      `json:"dept_order"`
+	Extension        string   `json:"extension"`
+	HiredDate        int      `json:"hired_date"`
+	Active           bool     `json:"active"`
+	Admin            bool     `json:"admin"`
+	Boss             bool     `json:"boss"`
+	Leader           bool     `json:"leader"`
+	ExclusiveAccount bool     `json:"exclusive_account"`
+}
+
+type UsersResult struct {
+	HasMore    bool    `json:"has_more"`
+	NextCursor int     `json:"next_cursor"`
+	List       []*User `json:"list"`
+}
+
+// ListUsers gets a list of user detail
+// API docs: https://open.dingtalk.com/document/orgapp/queries-the-complete-information-of-a-department-user
+func (s *ContactsService) ListUsers(ctx context.Context, opts *ListUsersOptions) (*UsersResult, error) {
+	const apiEndpoint = "https://oapi.dingtalk.com/topapi/v2/user/list"
+	var respBody UsersResult
+	if err := s.client.InvokeByToken(ctx, http.MethodPost, apiEndpoint, opts, &respBody); err != nil {
+		return nil, err
+	}
+	return &respBody, nil
+}
+
 type DepartmentV1 struct {
 	DeptId          int    `json:"id"`
 	ParentId        int    `json:"parentid"`
@@ -40,7 +91,6 @@ type DepartmentV1 struct {
 }
 
 type DepartmentsResult struct {
-	Result
 	Department []*DepartmentV1 `json:"department"`
 }
 
@@ -56,9 +106,6 @@ func (s *ContactsService) ListDepartmentsV1(ctx context.Context, opts *ListDepar
 	const apiEndpoint = "https://oapi.dingtalk.com/department/list"
 	var respBody DepartmentsResult
 	if err := s.client.InvokeByToken(ctx, http.MethodGet, apiEndpoint, opts, &respBody); err != nil {
-		return nil, err
-	}
-	if err := respBody.Error(); err != nil {
 		return nil, err
 	}
 	return respBody.Department, nil

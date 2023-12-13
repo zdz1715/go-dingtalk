@@ -2,13 +2,15 @@ package dingtalk
 
 import (
 	"context"
-	"github.com/zdz1715/ghttp"
+	"os"
 	"testing"
+
+	"github.com/zdz1715/ghttp"
 )
 
 var testInternalAppCredential = &InternalAppCredential{
-	AppKey:    "dingyu6tvxassvlwmrn3",
-	AppSecret: "VctzwFg9LZ0PIHoKmYxx5tYwslCOhnQC0oH3tjVAvY2tsmcNwuQTGIAADjaQKiGP",
+	AppKey:    os.Getenv("TEST_DINGTALK_APP_KEY"),
+	AppSecret: os.Getenv("TEST_DINGTALK_APP_SECRET"),
 }
 
 func TestOAuthService_GetAccessToken(t *testing.T) {

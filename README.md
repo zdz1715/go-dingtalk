@@ -49,8 +49,8 @@ func main() {
 ## ToDo
 > [!NOTE]
 > 现在提供的方法不多，会逐渐完善，也欢迎来贡献代码，只需要编写参数结构体、响应结构体就可以很快添加一个方法，参考下方代码。
-
 ```go
+// 响应
 type Department struct {
 	DeptId          int    `json:"dept_id"`
 	ParentId        int    `json:"parent_id"`
@@ -59,6 +59,7 @@ type Department struct {
 	Name            string `json:"name"`
 }
 
+// 请求参数
 type ListDepartmentsOptions struct {
 	DeptId   *int      `json:"dept_id,omitempty" query:"dept_id"`
 	Language *Language `json:"language,omitempty" query:"language"`

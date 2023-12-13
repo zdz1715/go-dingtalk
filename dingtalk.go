@@ -125,9 +125,10 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args interface
 		},
 		// 处理旧版API返回错误
 		AfterHook: func(response *http.Response) error {
-			if !c.IsOldAPI(response.Request, true) {
+			if !c.IsOldAPI(response.Request, false) {
 				return nil
 			}
+			// 处理 https://oapi.dingtalk.com/
 			all, err := io.ReadAll(response.Body)
 			if err != nil {
 				return err
@@ -138,15 +139,19 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args interface
 			if err = json.Unmarshal(all, result); err != nil {
 				return err
 			}
-
 			if err = result.Error(); err != nil {
 				return err
 			}
-			byt, err := json.Marshal(result.Result)
-			if err != nil {
-				return err
+			if c.IsOldAPI(response.Request, true) {
+				// 处理 https://oapi.dingtalk.com/topapi/
+				byt, err := json.Marshal(result.Result)
+				if err != nil {
+					return err
+				}
+				response.Body = io.NopCloser(bytes.NewReader(byt))
+			} else {
+				response.Body = io.NopCloser(bytes.NewReader(all))
 			}
-			response.Body = io.NopCloser(bytes.NewReader(byt))
 			return nil
 		},
 	}
