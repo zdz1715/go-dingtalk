@@ -41,28 +41,28 @@ type ListUsersOptions struct {
 }
 
 type User struct {
-	Userid           string   `json:"userid"`
-	Unionid          string   `json:"unionid"`
-	Name             string   `json:"name"`
-	Avatar           string   `json:"avatar"`
-	StateCode        string   `json:"state_code"`
-	Mobile           string   `json:"mobile"`
-	HideMobile       string   `json:"hide_mobile"`
-	Telephone        string   `json:"telephone"`
-	JobNumber        string   `json:"job_number"`
-	Title            string   `json:"title"`
-	Email            string   `json:"email"`
-	OrgEmail         string   `json:"org_email"`
-	Remark           string   `json:"remark"`
-	DeptIDList       []string `json:"dept_id_list"`
-	DeptOrder        int      `json:"dept_order"`
-	Extension        string   `json:"extension"`
-	HiredDate        int      `json:"hired_date"`
-	Active           bool     `json:"active"`
-	Admin            bool     `json:"admin"`
-	Boss             bool     `json:"boss"`
-	Leader           bool     `json:"leader"`
-	ExclusiveAccount bool     `json:"exclusive_account"`
+	Userid           string `json:"userid"`
+	Unionid          string `json:"unionid"`
+	Name             string `json:"name"`
+	Avatar           string `json:"avatar"`
+	StateCode        string `json:"state_code"`
+	Mobile           string `json:"mobile"`
+	HideMobile       string `json:"hide_mobile"`
+	Telephone        string `json:"telephone"`
+	JobNumber        string `json:"job_number"`
+	Title            string `json:"title"`
+	Email            string `json:"email"`
+	OrgEmail         string `json:"org_email"`
+	Remark           string `json:"remark"`
+	DeptIDList       []int  `json:"dept_id_list"`
+	DeptOrder        int    `json:"dept_order"`
+	Extension        string `json:"extension"`
+	HiredDate        int    `json:"hired_date"`
+	Active           bool   `json:"active"`
+	Admin            bool   `json:"admin"`
+	Boss             bool   `json:"boss"`
+	Leader           bool   `json:"leader"`
+	ExclusiveAccount bool   `json:"exclusive_account"`
 }
 
 type UsersResult struct {
