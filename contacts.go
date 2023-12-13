@@ -47,7 +47,7 @@ type User struct {
 	Avatar           string `json:"avatar"`
 	StateCode        string `json:"state_code"`
 	Mobile           string `json:"mobile"`
-	HideMobile       string `json:"hide_mobile"`
+	HideMobile       bool   `json:"hide_mobile"`
 	Telephone        string `json:"telephone"`
 	JobNumber        string `json:"job_number"`
 	Title            string `json:"title"`
