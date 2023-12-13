@@ -95,8 +95,8 @@ type DepartmentsResult struct {
 }
 
 type ListDepartmentsV1Options struct {
-	ID         string    `json:"id,omitempty" query:"id"`
-	FetchChild bool      `json:"fetch_child,omitempty" query:"fetch_child"`
+	ID         *string   `json:"id,omitempty" query:"id"`
+	FetchChild *bool     `json:"fetch_child,omitempty" query:"fetch_child"`
 	Lang       *Language `json:"lang,omitempty" query:"lang"`
 }
 
