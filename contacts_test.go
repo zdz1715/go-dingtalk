@@ -2,9 +2,10 @@ package dingtalk
 
 import (
 	"context"
+	"testing"
+
 	"github.com/zdz1715/ghttp"
 	"github.com/zdz1715/go-utils/goutils"
-	"testing"
 )
 
 func TestContactsService_ListDepartments(t *testing.T) {
@@ -42,7 +43,7 @@ func TestContactsService_ListDepartmentsV1(t *testing.T) {
 	}
 	// 	查询全部部门
 	reply, err := client.Contacts.ListDepartmentsV1(context.Background(), &ListDepartmentsV1Options{
-		FetchChild: true,
+		FetchChild: goutils.Ptr(true),
 	})
 
 	if err != nil {

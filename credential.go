@@ -7,14 +7,13 @@ import (
 
 var (
 	ErrCredential = errors.New("invalid credential")
-	ErrAuthType   = errors.New("invalid authType")
+	ErrNilBody    = errors.New("nil body")
 )
 
 type Credential interface {
-	AuthType() AuthType
-	Method() string
 	URL() string
-	Body() interface{}
+	Method() string
+	Body(opts *GetAccessTokenOptions) any
 	Valid() error
 }
 
@@ -29,7 +28,11 @@ func (c *InternalAppCredential) URL() string {
 	return "/v1.0/oauth2/accessToken"
 }
 
-func (c *InternalAppCredential) Body() interface{} {
+func (c *InternalAppCredential) Method() string {
+	return http.MethodPost
+}
+
+func (c *InternalAppCredential) Body(opts *GetAccessTokenOptions) any {
 	return c
 }
 
@@ -38,12 +41,4 @@ func (c *InternalAppCredential) Valid() error {
 		return ErrCredential
 	}
 	return nil
-}
-
-func (c *InternalAppCredential) AuthType() AuthType {
-	return AuthTypeApp
-}
-
-func (c *InternalAppCredential) Method() string {
-	return http.MethodPost
 }

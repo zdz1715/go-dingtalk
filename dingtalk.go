@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -31,6 +32,8 @@ type Client struct {
 	OAuth *OAuthService
 	// 通讯录
 	Contacts *ContactsService
+	// 机器人
+	Robot *RobotsService
 }
 
 func NewClient(credential Credential, opts *Options) (*Client, error) {
@@ -63,6 +66,7 @@ func NewClient(credential Credential, opts *Options) (*Client, error) {
 
 	c.OAuth = &OAuthService{client: c.common.client}
 	c.Contacts = (*ContactsService)(&c.common)
+	c.Robot = (*RobotsService)(&c.common)
 
 	if opts.InitSkipCredential {
 		return c, nil
@@ -101,7 +105,7 @@ func (c *Client) IsOldAPI(req *http.Request, checkV1 bool) bool {
 	return req.URL.Host == "oapi.dingtalk.com" && strings.HasPrefix(req.URL.Path, "/topapi/")
 }
 
-func (c *Client) InvokeByToken(ctx context.Context, method, path string, args interface{}, reply interface{}) error {
+func (c *Client) InvokeByToken(ctx context.Context, method, path string, args any, reply any) error {
 	accessToken, err := c.OAuth.GetAccessToken(ctx)
 	if err != nil {
 		return err
@@ -109,7 +113,7 @@ func (c *Client) InvokeByToken(ctx context.Context, method, path string, args in
 	return c.Invoke(ctx, method, path, args, reply, accessToken.AccessToken)
 }
 
-func (c *Client) Invoke(ctx context.Context, method, path string, args interface{}, reply interface{}, token string) error {
+func (c *Client) Invoke(ctx context.Context, method, path string, args any, reply any, token string) error {
 	callOpts := &ghttp.CallOptions{
 		BeforeHook: func(request *http.Request) error {
 			if token != "" {
@@ -124,6 +128,7 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args interface
 			}
 			return nil
 		},
+
 		// 处理旧版API返回错误
 		AfterHook: func(response *http.Response) error {
 			if !c.IsOldAPI(response.Request, false) {
@@ -164,4 +169,42 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args interface
 
 	_, err := c.cc.Invoke(ctx, method, path, args, reply, callOpts)
 	return err
+}
+
+// Error
+// 新版 API docs: https://open.dingtalk.com/document/orgapp/error-code
+type Error struct {
+	Code      string `json:"code"`
+	Message   string `json:"message"`
+	RequestId string `json:"requestid"`
+}
+
+func (e *Error) String() string {
+	if e.Message != "" {
+		return e.Message
+	}
+	if e.Code != "" {
+		return e.Code
+	}
+	return ""
+}
+
+func (e *Error) Reset() {
+	e.Code = ""
+	e.Message = ""
+}
+
+// Result
+// 旧版 API Docs: https://open.dingtalk.com/document/orgapp/server-api-error-codes-1
+type Result struct {
+	Errcode int    `json:"errcode"`
+	Errmsg  string `json:"errmsg"`
+	Result  any    `json:"result"`
+}
+
+func (r *Result) Error() error {
+	if r.Errcode == 0 {
+		return nil
+	}
+	return fmt.Errorf("errcode=%d errmsg=%s", r.Errcode, r.Errmsg)
 }

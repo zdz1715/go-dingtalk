@@ -5,6 +5,18 @@ import (
 	"time"
 )
 
+type GetAccessTokenOptions struct {
+	Code         string
+	RefreshToken string
+}
+
+type AccessToken struct {
+	AccessToken  string `json:"accessToken,omitempty" xml:"accessToken,omitempty"`
+	RefreshToken string `xml:"refreshToken" xml:"refreshToken"`
+	CorpId       string `json:"corpId" xml:"corpId"`
+	ExpireIn     int64  `json:"expireIn,omitempty" xml:"expireIn,omitempty"`
+}
+
 // OAuthService
 // API Docs: https://open.dingtalk.com/document/orgapp/authorization-overview
 type OAuthService struct {
@@ -40,34 +52,38 @@ func (s *store) IsExpired() bool {
 	return time.Now().After(s.expire)
 }
 
-type AccessToken struct {
-	AccessToken string `json:"accessToken,omitempty" xml:"accessToken,omitempty"`
-	ExpireIn    int64  `json:"expireIn,omitempty" xml:"expireIn,omitempty"`
-}
-
 // GetAccessToken get access token.
 // API Docs:  https://open.dingtalk.com/document/orgapp/obtain-the-access_token-of-an-internal-app
-func (s *OAuthService) GetAccessToken(ctx context.Context) (*AccessToken, error) {
-	if !s.store.IsExpired() {
+func (s *OAuthService) GetAccessToken(ctx context.Context, opts ...*GetAccessTokenOptions) (*AccessToken, error) {
+	opt := new(GetAccessTokenOptions)
+	if len(opts) > 0 && opts[0] != nil {
+		opt = opts[0]
+	}
+
+	// 如果是刷新token，则强制刷新
+	if opt.RefreshToken == "" && !s.store.IsExpired() {
 		return s.store.value(), nil
 	}
+
 	if s.credential == nil {
 		return nil, ErrCredential
 	}
 	if err := s.credential.Valid(); err != nil {
 		return nil, err
 	}
-	switch s.credential.AuthType() {
-	case AuthTypeApp:
-	default:
-		return nil, ErrAuthType
+
+	body := s.credential.Body(opt)
+
+	if body == nil {
+		return nil, ErrNilBody
 	}
+
 	var respBody AccessToken
 	err := s.client.Invoke(
 		ctx,
 		s.credential.Method(),
 		s.credential.URL(),
-		s.credential.Body(),
+		body,
 		&respBody,
 		"",
 	)
