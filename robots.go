@@ -34,66 +34,66 @@ func (s *RobotsService) ListRobotsInGroup(ctx context.Context, opts *ListRobotsI
 	return &respBody, nil
 }
 
-type SendOptionsText struct {
+type RobotTextMsgOptions struct {
 	Content *string `json:"content,omitempty"`
 }
 
-type SendOptionsMarkdown struct {
+type RobotMarkdownMsgOptions struct {
 	Title *string `json:"title,omitempty"`
 	Text  *string `json:"text,omitempty"`
 }
 
-type SendOptionsLink struct {
+type RobotLinkMsgOptions struct {
 	MessageUrl *string `json:"messageUrl,omitempty"`
 	Title      *string `json:"title,omitempty"`
 	PicUrl     *string `json:"picUrl,omitempty"`
 	Text       *string `json:"text,omitempty"`
 }
 
-type SendOptionsAt struct {
+type RobotSendOptionsAt struct {
 	IsAtAll   *bool    `json:"isAtAll,omitempty"`
 	AtMobiles []string `json:"atMobiles,omitempty"`
 	AtUserIds []string `json:"atUserIds,omitempty"`
 }
 
-type SendOptionsActionCard struct {
-	HideAvatar     *string                    `json:"hideAvatar,omitempty"`
-	BtnOrientation *string                    `json:"btnOrientation,omitempty"`
-	SingleURL      *string                    `json:"singleURL,omitempty"`
-	SingleTitle    *string                    `json:"singleTitle,omitempty"`
-	Text           *string                    `json:"text,omitempty"`
-	Title          *string                    `json:"title,omitempty"`
-	Btns           []SendOptionsActionCardBtn `json:"btns,omitempty"`
+type RobotActionCardMsgOptions struct {
+	HideAvatar     *string                         `json:"hideAvatar,omitempty"`
+	BtnOrientation *string                         `json:"btnOrientation,omitempty"`
+	SingleURL      *string                         `json:"singleURL,omitempty"`
+	SingleTitle    *string                         `json:"singleTitle,omitempty"`
+	Text           *string                         `json:"text,omitempty"`
+	Title          *string                         `json:"title,omitempty"`
+	Btns           []*RobotActionCardMsgOptionsBtn `json:"btns,omitempty"`
 }
 
-type SendOptionsActionCardBtn struct {
+type RobotActionCardMsgOptionsBtn struct {
 	Title     *string `json:"title,omitempty"`
 	ActionURL *string `json:"actionURL,omitempty"`
 }
 
-type SendOptionsFeedCard struct {
-	Links []SendOptionsFeedCardLink `json:"links,omitempty"`
+type RobotFeedCardMsgOptions struct {
+	Links []*RobotFeedCardMsgOptionsLink `json:"links,omitempty"`
 }
 
-type SendOptionsFeedCardLink struct {
+type RobotFeedCardMsgOptionsLink struct {
 	MessageURL *string `json:"messageURL,omitempty"`
 	Title      *string `json:"title,omitempty"`
 	PicURL     *string `json:"picURL,omitempty"`
 }
 
-type SendOptions struct {
-	Msgtype    *MsgType               `json:"msgtype,omitempty"`
-	At         *SendOptionsAt         `json:"at,omitempty"`
-	Link       *SendOptionsLink       `json:"link,omitempty"`
-	Text       *SendOptionsText       `json:"text,omitempty"`
-	Markdown   *SendOptionsMarkdown   `json:"markdown,omitempty"`
-	ActionCard *SendOptionsActionCard `json:"actionCard,omitempty"`
-	FeedCard   *SendOptionsFeedCard   `json:"feedCard,omitempty"`
+type RobotSendOptions struct {
+	Msgtype    *RobotMsgType              `json:"msgtype,omitempty"`
+	At         *RobotSendOptionsAt        `json:"at,omitempty"`
+	Link       *RobotLinkMsgOptions       `json:"link,omitempty"`
+	Text       *RobotTextMsgOptions       `json:"text,omitempty"`
+	Markdown   *RobotMarkdownMsgOptions   `json:"markdown,omitempty"`
+	ActionCard *RobotActionCardMsgOptions `json:"actionCard,omitempty"`
+	FeedCard   *RobotFeedCardMsgOptions   `json:"feedCard,omitempty"`
 }
 
 // Send messages in group by custom robots
 // API docs: https://open.dingtalk.com/document/orgapp/custom-robots-send-group-messages
-func (s *RobotsService) Send(ctx context.Context, accessToken string, opts *SendOptions) error {
+func (s *RobotsService) Send(ctx context.Context, accessToken string, opts *RobotSendOptions) error {
 	var apiEndpoint = fmt.Sprintf("https://oapi.dingtalk.com/robot/send?access_token=%s", accessToken)
 	return s.client.Invoke(ctx, http.MethodPost, apiEndpoint, opts, nil, "")
 }

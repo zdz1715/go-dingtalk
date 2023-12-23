@@ -110,3 +110,22 @@ func (s *ContactsService) ListDepartmentsV1(ctx context.Context, opts *ListDepar
 	}
 	return respBody.Department, nil
 }
+
+type GetUserByMobileOptions struct {
+	Mobile                        *string `json:"mobile,omitempty"`
+	SupportExclusiveAccountSearch *bool   `json:"support_exclusive_account_search,omitempty"`
+}
+
+type GetUserByMobileReply struct {
+	Userid                     string   `json:"userid"`
+	ExclusiveAccountUseridList []string `json:"exclusive_account_userid_list"`
+}
+
+func (s *ContactsService) GetUserByMobile(ctx context.Context, opts *GetUserByMobileOptions) (*GetUserByMobileReply, error) {
+	const apiEndpoint = "https://oapi.dingtalk.com/topapi/v2/user/getbymobile"
+	var respBody GetUserByMobileReply
+	if err := s.client.InvokeByToken(ctx, http.MethodPost, apiEndpoint, opts, &respBody); err != nil {
+		return nil, err
+	}
+	return &respBody, nil
+}

@@ -32,6 +32,8 @@ type Client struct {
 	OAuth *OAuthService
 	// 通讯录
 	Contacts *ContactsService
+	// 消息通知
+	Message *MessagesService
 	// 机器人
 	Robot *RobotsService
 }
@@ -66,6 +68,7 @@ func NewClient(credential Credential, opts *Options) (*Client, error) {
 
 	c.OAuth = &OAuthService{client: c.common.client}
 	c.Contacts = (*ContactsService)(&c.common)
+	c.Message = (*MessagesService)(&c.common)
 	c.Robot = (*RobotsService)(&c.common)
 
 	if opts.InitSkipCredential {
@@ -95,14 +98,14 @@ func (c *Client) SetCredential(credential Credential) error {
 	return nil
 }
 
-func (c *Client) IsOldAPI(req *http.Request, checkV1 bool) bool {
+func (c *Client) IsOldAPI(req *http.Request, topapiV2 bool) bool {
 	if req == nil || req.URL == nil {
 		return false
 	}
-	if !checkV1 {
+	if !topapiV2 {
 		return req.URL.Host == "oapi.dingtalk.com"
 	}
-	return req.URL.Host == "oapi.dingtalk.com" && strings.HasPrefix(req.URL.Path, "/topapi/")
+	return req.URL.Host == "oapi.dingtalk.com" && strings.HasPrefix(req.URL.Path, "/topapi/v2/")
 }
 
 func (c *Client) InvokeByToken(ctx context.Context, method, path string, args any, reply any) error {
@@ -117,7 +120,7 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 	callOpts := &ghttp.CallOptions{
 		BeforeHook: func(request *http.Request) error {
 			if token != "" {
-				if c.IsOldAPI(request, false) {
+				if request.URL.Host == "oapi.dingtalk.com" {
 					query := request.URL.Query()
 					query.Set("access_token", token)
 					request.URL.RawQuery = query.Encode()
@@ -131,16 +134,16 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 
 		// 处理旧版API返回错误
 		AfterHook: func(response *http.Response) error {
-			if !c.IsOldAPI(response.Request, false) {
+			// 新版api根据http code处理
+			if response.Request.URL.Host != "oapi.dingtalk.com" {
 				return nil
 			}
-			// 处理 https://oapi.dingtalk.com/
+			// 处理旧版api
 			all, err := io.ReadAll(response.Body)
 			if err != nil {
 				return err
 			}
 			_ = response.Body.Close()
-
 			result := new(Result)
 			if err = json.Unmarshal(all, result); err != nil {
 				return err
@@ -148,14 +151,15 @@ func (c *Client) Invoke(ctx context.Context, method, path string, args any, repl
 			if err = result.Error(); err != nil {
 				return err
 			}
-			if c.IsOldAPI(response.Request, true) {
-				// 处理 https://oapi.dingtalk.com/topapi/
+			if strings.HasPrefix(response.Request.URL.Path, "/topapi/v2/") {
+				// 处理 https://oapi.dingtalk.com/topapi/v2/
 				byt, err := json.Marshal(result.Result)
 				if err != nil {
 					return err
 				}
 				response.Body = io.NopCloser(bytes.NewReader(byt))
 			} else {
+				// 处理 https://oapi.dingtalk.com/topapi/
 				response.Body = io.NopCloser(bytes.NewReader(all))
 			}
 			return nil
