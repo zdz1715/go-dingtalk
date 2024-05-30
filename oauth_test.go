@@ -16,7 +16,7 @@ var testInternalAppCredential = &InternalAppCredential{
 func TestOAuthService_GetAccessToken(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 		//InitSkipCredential: true,
 	})

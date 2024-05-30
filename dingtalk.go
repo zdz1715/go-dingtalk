@@ -17,8 +17,7 @@ type service struct {
 }
 
 type Options struct {
-	ClientOpts         []ghttp.ClientOption
-	InitSkipCredential bool
+	ClientOpts []ghttp.ClientOption
 }
 
 type Client struct {
@@ -52,15 +51,12 @@ func NewClient(credential Credential, opts *Options) (*Client, error) {
 	// 覆盖Endpoint
 	clientOptions = append(clientOptions, ghttp.WithEndpoint("https://api.dingtalk.com"))
 	// 新版API错误处理
-	clientOptions = append(clientOptions, ghttp.WithNot2xxError(&Error{}))
-
-	cc, err := ghttp.NewClient(context.Background(), clientOptions...)
-	if err != nil {
-		return nil, err
-	}
+	clientOptions = append(clientOptions, ghttp.WithNot2xxError(func() ghttp.Not2xxError {
+		return new(Error)
+	}))
 
 	c := &Client{
-		cc:   cc,
+		cc:   ghttp.NewClient(clientOptions...),
 		opts: opts,
 	}
 
@@ -71,12 +67,10 @@ func NewClient(credential Credential, opts *Options) (*Client, error) {
 	c.Message = (*MessagesService)(&c.common)
 	c.Robot = (*RobotsService)(&c.common)
 
-	if opts.InitSkipCredential {
-		return c, nil
-	}
-
-	if err = c.SetCredential(credential); err != nil {
-		return nil, err
+	if credential != nil {
+		if err := c.SetCredential(credential); err != nil {
+			return nil, err
+		}
 	}
 
 	return c, nil

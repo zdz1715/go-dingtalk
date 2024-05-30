@@ -16,8 +16,8 @@ type Department struct {
 }
 
 type ListDepartmentsOptions struct {
-	DeptId   *int      `json:"dept_id,omitempty" query:"dept_id"`
-	Language *Language `json:"language,omitempty" query:"language"`
+	DeptId   *int      `json:"dept_id,omitempty" query:"dept_id,omitempty"`
+	Language *Language `json:"language,omitempty" query:"language,omitempty"`
 }
 
 // ListDepartments gets a list of departments
@@ -32,12 +32,12 @@ func (s *ContactsService) ListDepartments(ctx context.Context, opts *ListDepartm
 }
 
 type ListUsersOptions struct {
-	DeptId             *int      `json:"dept_id,omitempty" query:"dept_id"`
-	Cursor             *int      `json:"cursor,omitempty" query:"cursor"`
-	Size               *int      `json:"size,omitempty" query:"size"`
-	OrderField         *string   `json:"order_field,omitempty" query:"order_field"`
-	ContainAccessLimit *bool     `json:"contain_access_limit,omitempty" query:"contain_access_limit"`
-	Language           *Language `json:"language,omitempty" query:"language"`
+	DeptId             *int      `json:"dept_id,omitempty" query:"dept_id,omitempty"`
+	Cursor             *int      `json:"cursor,omitempty" query:"cursor,omitempty"`
+	Size               *int      `json:"size,omitempty" query:"size,omitempty"`
+	OrderField         *string   `json:"order_field,omitempty" query:"order_field,omitempty"`
+	ContainAccessLimit *bool     `json:"contain_access_limit,omitempty" query:"contain_access_limit,omitempty"`
+	Language           *Language `json:"language,omitempty" query:"language,omitempty"`
 }
 
 type User struct {
@@ -95,9 +95,9 @@ type DepartmentsResult struct {
 }
 
 type ListDepartmentsV1Options struct {
-	ID         *string   `json:"id,omitempty" query:"id"`
-	FetchChild *bool     `json:"fetch_child,omitempty" query:"fetch_child"`
-	Lang       *Language `json:"lang,omitempty" query:"lang"`
+	ID         *string   `json:"id,omitempty" query:"id,omitempty"`
+	FetchChild *bool     `json:"fetch_child,omitempty" query:"fetch_child,omitempty"`
+	Lang       *Language `json:"lang,omitempty" query:"lang,omitempty"`
 }
 
 // ListDepartmentsV1 gets a list of all departments

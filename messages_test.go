@@ -12,7 +12,7 @@ import (
 func TestMessagesService_AsyncSendCorpConversation(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 

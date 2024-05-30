@@ -12,7 +12,7 @@ import (
 func TestRobotsService_ListRobotsInGroup(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 
@@ -35,7 +35,7 @@ func TestRobotsService_ListRobotsInGroup(t *testing.T) {
 func TestRobotsService_Send(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 

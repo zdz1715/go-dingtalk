@@ -12,7 +12,7 @@ type AsyncSendCorpConversationOptions struct {
 	UseridList *string     `json:"userid_list,omitempty"`
 	DeptIdList *string     `json:"dept_id_list,omitempty"`
 	ToAllUser  *bool       `json:"to_all_user,omitempty"`
-	Msg        *MsgOptions `json:"msg,omitempty" query:"msg"`
+	Msg        *MsgOptions `json:"msg,omitempty"`
 }
 
 type MsgOptions struct {

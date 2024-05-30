@@ -11,7 +11,7 @@ import (
 func TestContactsService_ListDepartments(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 
@@ -34,7 +34,7 @@ func TestContactsService_ListDepartments(t *testing.T) {
 func TestContactsService_ListDepartmentsV1(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 
@@ -56,7 +56,7 @@ func TestContactsService_ListDepartmentsV1(t *testing.T) {
 func TestContactsService_ListUsers(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 
@@ -80,7 +80,7 @@ func TestContactsService_ListUsers(t *testing.T) {
 func TestContactsService_GetUserByMobile(t *testing.T) {
 	client, err := NewClient(testInternalAppCredential, &Options{
 		ClientOpts: []ghttp.ClientOption{
-			ghttp.WithDebug(true),
+			ghttp.WithDebug(ghttp.DefaultDebug),
 		},
 	})
 

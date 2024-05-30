@@ -3,7 +3,7 @@ module github.com/zdz1715/go-dingtalk
 go 1.20
 
 require (
-	github.com/zdz1715/ghttp v0.1.1
+	github.com/zdz1715/ghttp v1.0.3
 	github.com/zdz1715/go-utils v0.0.0-20231208070115-ae3f6e322e19
 )
 
@@ -31,6 +31,6 @@ require (
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
+	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
